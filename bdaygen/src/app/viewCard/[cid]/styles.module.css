@@ -1,0 +1,78 @@
+@font-face {
+	font-family: 'AmaticSC';
+	src: url('/assets/Amatic_SC/AmaticSC-Bold.ttf');
+	src: url('/assets/Amatic_SC/AmaticSC-Regular.ttf');
+	font-weight: 400;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Pacifico';
+	src: url('/assets/Pacifico/Pacifico-Regular.ttf');
+	font-weight: 400;
+	font-style: normal;
+}
+
+.cardContainer {
+	display: flex;
+	width: 300px;
+	height: 480px;
+	perspective: 1500px;
+}
+
+.cardContainer:hover .fstCardInner,
+.cardContainer:hover .fstCardOuter {
+	transform: rotateY(-130deg);
+}
+
+.fstCardInner {
+	position: relative;
+	/* padding-bottom: 20px; */
+	border-radius: 0.25rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	width: inherit;
+	background-color: #FFF9F2;
+	transform-origin: left;
+	transition-duration: 300ms;
+	transform-style: preserve-3d;
+	pointer-events: none;
+	z-index: 20;
+	height: inherit;
+}
+
+.fstCardInner:after {
+	content: '';
+	right: 0px;
+	bottom: 0px;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background: #FFF9F2;
+	-webkit-transform: rotateY(180deg);
+	-webkit-transform-style: preserve-3d;
+	-webkit-backface-visibility: hidden;
+}
+
+.sndCard {
+	background-color: #FFF9F2;
+	position: absolute;
+	border-radius: 0.25rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	width: inherit;
+	height: inherit;
+	z-index: 0;
+}
+
+.fontPacifico {
+	font-family: Pacifico, sans-serif;
+}
+
+.fontAmaticSC {
+	font-family: AmaticSC, sans-serif;
+}
