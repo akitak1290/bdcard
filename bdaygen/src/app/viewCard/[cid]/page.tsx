@@ -8,6 +8,7 @@ import { CARD_COLLECTION } from '@/app/_firebase/util';
 import Spinner from "@/app/_extraComponents/spinner";
 import Image from 'next/image'
 import styles from './styles.module.css'
+import { upperDecor, middleDecor, lowerDecor } from "@/app/createCard/utils";
 
 async function fetchDocs(id: string) {
 	const docRef = doc(db, CARD_COLLECTION, id);
@@ -29,16 +30,26 @@ export default function ViewCard({ params }: { params: { cid: string } }) {
 	const [message, setMessage] = useState('');
 	const [signOff, setSignOff] = useState('');
 
+	const [curUpperDecor, setCurUpperDecor] = useState(Object.keys(upperDecor)[0]);
+	const [curMiddleDecor, setCurMiddleDecor] = useState(Object.keys(middleDecor)[0]);
+	const [curLowerDecor, setCurLowerDecor] = useState(Object.keys(lowerDecor)[0]);
+	
+	const [gotData, setGotData] = useState(false);
+
 	useEffect(() => {
-		// on mount
+		// one time thing
 		fetchDocs(params.cid).then((value) => {
 			setRecipientName(value.recipientName);
 			setMessage(value.message);
 			setSignOff(value.signOff);
+			setCurUpperDecor(value.curUpperDecor);
+			setCurMiddleDecor(value.curMiddleDecor);
+			setCurLowerDecor(value.curLowerDecor);
+			setGotData(true);
 		})
 	}, [])
 
-	if (recipientName === "") {
+	if (!gotData) {
 		return (
 			<div className="min-h-screen flex items-center justify-center bg-gray-100">
 				<Spinner />
@@ -52,7 +63,7 @@ export default function ViewCard({ params }: { params: { cid: string } }) {
 				<div className={styles.fstCardInner}>
 					<div className="w-inherit h-[30%]">
 						<Image
-							src="/imgs/Ribbons.png"
+							src={`/imgs/${upperDecor[curUpperDecor as keyof typeof upperDecor]}`}
 							width={761}
 							height={411}
 							quality={100}
@@ -61,7 +72,7 @@ export default function ViewCard({ params }: { params: { cid: string } }) {
 					</div>
 					<div className="w-[60%] h-[35%] mt-3">
 						<Image
-							src="/imgs/HPBD2.png"
+							src={`/imgs/${middleDecor[curMiddleDecor as keyof typeof middleDecor]}`}
 							width={494}
 							height={416}
 							quality={100}
@@ -70,7 +81,7 @@ export default function ViewCard({ params }: { params: { cid: string } }) {
 					</div>
 					<div className="w-[40%] h-[15%] mt-3">
 						<Image
-							src="/imgs/Cake.png"
+							src={`/imgs/${lowerDecor[curLowerDecor as keyof typeof lowerDecor]}`}
 							width={320}
 							height={216}
 							quality={100}

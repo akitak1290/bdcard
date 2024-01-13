@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 
 import { auth } from "@/app/_firebase/config";
 import Spinner from "@/app/_extraComponents/spinner";
-import { Tab } from "@headlessui/react";
 import ConfirmDialog from "./confirmDialog";
 import CardInfoForm from "./CardInfoForm";
 import StickersForm from "./StickersForm";
@@ -33,6 +32,8 @@ export default function CreateCard() {
 		if (!loading && !user) router.push("/signup");
 	}, [user, loading, error])
 
+	const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
@@ -46,22 +47,23 @@ export default function CreateCard() {
 			body: JSON.stringify({
 				'recipientName': recipientName,
 				'message': message,
-				'signOff': signOff
+				'signOff': signOff,
+				'curUpperDecor': curUpperDecor,
+				'curMiddleDecor': curMiddleDecor,
+				'curLowerDecor': curLowerDecor
 			})
 		});
 
 		if (response.ok) {
 			const data = await response.json();
 
-			// setIsDialogOpen(true);
-			// setSubmitting(true);
+			setIsDialogOpen(true);
 			setRecipientName('');
 			setMessage('');
 			setSignOff('');
 
-			// await sleep(1500);
-			// setSubmitting(false);
-			// router.push(`/viewCard/${data.docId}`);
+			await sleep(1500);
+			router.push(`/viewCard/${data.docId}`);
 		} else {
 			console.log(response.status)
 			// setPromptError(`Something went wrong, please try again later\n${response.status}`)
@@ -116,7 +118,7 @@ export default function CreateCard() {
 								</button>
 								<button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 
 											    transition duration-300 disabled:bg-slate-400"
-									disabled={submitDisabled}>
+									disabled={submitDisabled} onClick={(e) => handleSubmit(e)}>
 									Submit
 								</button>
 							</div>
