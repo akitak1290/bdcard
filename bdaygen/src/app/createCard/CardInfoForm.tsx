@@ -60,7 +60,7 @@ export default function CardInfoForm(prop: PropType) {
 				</div>
 				<div className="mb-4">
 					<label htmlFor="message" className="block text-gray-700 text-sm font-bold mb-2">
-						Message <span className="text-gray-400 font-light">(maximum 200 characters)</span>
+						Message <span className="text-gray-400 font-light">(maximum 250 characters)</span>
 					</label>
 					<textarea
 						id="message"
@@ -69,7 +69,7 @@ export default function CardInfoForm(prop: PropType) {
 						className="w-full border p-2 rounded"
 						rows={8}
 						required
-						maxLength={200}
+						maxLength={250}
 					></textarea>
 				</div>
 				<div className="mb-4">
