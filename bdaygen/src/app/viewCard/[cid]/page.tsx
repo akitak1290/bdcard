@@ -1,7 +1,10 @@
 "use client"
 
-import { collection, doc, getDoc } from "firebase/firestore";
+import {  doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
+
+// import { jsConfetti } from '@/app/_confetti/config';
+import JSConfetti from 'js-confetti'
 
 import { db } from "@/app/_firebase/config";
 import { CARD_COLLECTION } from '@/app/_firebase/util';
@@ -46,6 +49,10 @@ export default function ViewCard({ params }: { params: { cid: string } }) {
 			setCurMiddleDecor(value.curMiddleDecor);
 			setCurLowerDecor(value.curLowerDecor);
 			setGotData(true);
+
+			// ! THIS THING CREATES A CANVAS OBJECT IN BODY
+			const jsConfetti = new JSConfetti();
+			jsConfetti.addConfetti();
 		})
 	}, [])
 
