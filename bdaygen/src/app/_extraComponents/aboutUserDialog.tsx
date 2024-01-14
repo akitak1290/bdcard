@@ -1,15 +1,15 @@
 "use client"
 
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { Dialog, Transition } from '@headlessui/react';
 import { signOut } from "firebase/auth";
 
 import { auth } from "@/app/_firebase/config";
+import { AddUserToDb } from "@/app/_firebase/manageUsers";
 import useSignInAnon from '@/app/_firebase/AuthAnon';
 import { SignInDialog } from '../signIn/page';
 import { CreateAccountDialog } from '../createAccount/page';
-import { useAuthState } from 'react-firebase-hooks/auth';
-
 
 function classNames(...classes: any[]) {
 	return classes.filter(Boolean).join(' ');
@@ -26,7 +26,7 @@ type PropType = {
 
 export default function AboutUserDialog(prop: PropType) {
 	const { isOpen, setIsOpen, message } = prop;
-	const [signInAnon] = useSignInAnon(auth);
+	const [signInAnon, loggedInUser, loadingUser, errorUser] = useSignInAnon(auth);
 	const [loading, setLoading] = useState(false);
 	const [authType, setAuthType] = useState(0);
 	const [promptError, setPromptError] = useState('');
@@ -34,14 +34,20 @@ export default function AboutUserDialog(prop: PropType) {
 	const [user, loadingAuth, errorAuth] = useAuthState(auth);
 
 	useEffect(() => {
-		if (user) {
+		if (!loadingAuth && user) {
 			setLoading(false);
 			setAuthType(0);
 		};
-		if (errorAuth) {
-			setPromptError("Something when wrong, please try again later");
+		if (errorAuth) setPromptError("Something when wrong, please try again later");
+	}, [user, loadingAuth, errorAuth])
+
+	useEffect(() => {
+		if (!loadingUser && loggedInUser) {
+			setLoading(false);
+			AddUserToDb(loggedInUser.user.uid);
 		}
-	}, [user, errorAuth])
+		if (errorUser) setPromptError("Something when wrong, please try again later");
+	}, [loggedInUser, loadingUser, errorUser])
 
 	const handleSignInAnon = async () => {
 		if (loading) return;
@@ -105,13 +111,13 @@ export default function AboutUserDialog(prop: PropType) {
 										)}>
 											<button
 												type="button"
+												disabled={loading}
 												className={classNames(
 													"inline-flex justify-center rounded-md border border-transparent",
 													"bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900",
-													"hover:bg-blue-200 focus:outline-none focus-visible:ring-2",
+													"enabled:hover:bg-blue-200 focus:outline-none focus-visible:ring-2",
 													"focus-visible:ring-blue-500 focus-visible:ring-offset-2",
-													"disabled:bg-slate-400",
-													loading ? "disabled" : "enabled:"
+													"disabled:bg-slate-200 disabled:text-white",
 												)}
 												onClick={() => handleSignInAnon()}
 											>
@@ -119,13 +125,13 @@ export default function AboutUserDialog(prop: PropType) {
 											</button>
 											<button
 												type="button"
+												disabled={loading}
 												className={classNames(
 													"inline-flex justify-center rounded-md border border-transparent",
 													"bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900",
 													"hover:bg-blue-200 focus:outline-none focus-visible:ring-2",
 													"focus-visible:ring-blue-500 focus-visible:ring-offset-2",
-													"disabled:bg-slate-400",
-													loading ? "disabled" : "enabled:"
+													"disabled:bg-slate-200 disabled:text-white"
 												)}
 												onClick={() => setAuthType(1)}
 											>
@@ -134,13 +140,13 @@ export default function AboutUserDialog(prop: PropType) {
 											<h2>or</h2>
 											<button
 												type="button"
+												disabled={loading}
 												className={classNames(
 													"inline-flex justify-center rounded-md border border-transparent",
 													"bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900",
 													"hover:bg-blue-200 focus:outline-none focus-visible:ring-2",
 													"focus-visible:ring-blue-500 focus-visible:ring-offset-2",
-													"disabled:bg-slate-400",
-													loading ? "disabled" : "enabled:"
+													"disabled:bg-slate-200 disabled:text-white"
 												)}
 												onClick={() => setAuthType(2)}
 											>
