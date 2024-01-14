@@ -22,6 +22,8 @@ export default function useSignInAnon(auth: Auth): AnonActionHook {
 			try {
 				const user = await signInAnonymously(auth);
 				setLoggedInUser(user);
+
+				return user
 			} catch (err) {
 				setError(err as AuthError);
 			} finally {
