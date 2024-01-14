@@ -10,7 +10,7 @@ export function SignInDialog({ disableSignUp }: { disableSignUp?: boolean }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
-	const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
+	const [signInWithEmailAndPassword, loggedInUser, loading, error] = useSignInWithEmailAndPassword(auth);
 	const router = useRouter()
 
 	const handleSignIn = async () => {
@@ -25,6 +25,7 @@ export function SignInDialog({ disableSignUp }: { disableSignUp?: boolean }) {
 
 	return (
 		<div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+			{(error) && <h2 className='text-b text-amber-700 text-center'>Something when wrong!, please try again later.</h2>}
 			<h2 className="text-2xl font-bold mb-6">Sign In</h2>
 			<input
 				type="email"
