@@ -1,12 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/navigation";
 
 import { auth } from "@/app/_firebase/config";
 import Spinner from "@/app/_extraComponents/spinner";
-import ConfirmDialog from "./confirmDialog";
+import CustomDialog from "./customDialog";
 import CardInfoForm from "./CardInfoForm";
 import StickersForm from "./StickersForm";
 
@@ -27,63 +27,61 @@ export default function CreateCard() {
 	const [curLowerDecor, setCurLowerDecor] = useState(Object.keys(lowerDecor)[0]);
 
 	const [user, loading, error] = useAuthState(auth);
-	const router = useRouter();
-	useEffect(() => {
-		if (!loading && !user) router.push("/signup");
-	}, [user, loading, error])
 
 	const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
+		setIsDialogOpen(true);
+
 		// TODO: is adding user id as public data like
 		// TODO: this really a good idea? change later?
-		const response = await fetch('/api', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				'recipientName': recipientName,
-				'message': message,
-				'signOff': signOff,
-				'curUpperDecor': curUpperDecor,
-				'curMiddleDecor': curMiddleDecor,
-				'curLowerDecor': curLowerDecor
-			})
-		});
+		// const response = await fetch('/api', {
+		// 	method: 'POST',
+		// 	headers: {
+		// 		'Content-Type': 'application/json',
+		// 	},
+		// 	body: JSON.stringify({
+		// 		'recipientName': recipientName,
+		// 		'message': message,
+		// 		'signOff': signOff,
+		// 		'curUpperDecor': curUpperDecor,
+		// 		'curMiddleDecor': curMiddleDecor,
+		// 		'curLowerDecor': curLowerDecor
+		// 	})
+		// });
+		const response = {ok: false}
 
 		if (response.ok) {
-			const data = await response.json();
+			// const data = await response.json();
 
-			setIsDialogOpen(true);
 			setRecipientName('');
 			setMessage('');
 			setSignOff('');
 
 			await sleep(1500);
-			router.push(`/viewCard/${data.docId}`);
+			// router.push(`/viewCard/${data.docId}`);
 		} else {
-			console.log(response.status)
+			// console.log(response.status)
 			// setPromptError(`Something went wrong, please try again later\n${response.status}`)
 		}
 
 	};
 
-	if (loading || !user) {
-		return (
-			<div className="min-h-screen flex items-center justify-center bg-gray-100"	>
-				<Spinner />
-			</div>
-		);
-	}
+	// if (loading || !user) {
+	// 	return (
+	// 		<div className="min-h-screen flex items-center justify-center bg-gray-100"	>
+	// 			<Spinner />
+	// 		</div>
+	// 	);
+	// }
 
 	// TODO: tweak for responsive web design
 	// TODO: could do with some refactoring
 	// TODO: some hacky logic currently with the buttons
 	return (
-		<div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+		<div className="flex flex-col items-center justify-center bg-gray-100">
 			<div className="bg-white p-8 m-auto rounded shadow-md w-full md:max-w-3xl max-w-md">
 				{
 					(page === 0)
@@ -124,7 +122,8 @@ export default function CreateCard() {
 							</div>
 						</>
 				}
-				<ConfirmDialog isOpen={isDialogOpen} setIsOpen={setIsDialogOpen} message={"Birthday Card Created!"} />
+				<CustomDialog isOpen={isDialogOpen} setIsOpen={setIsDialogOpen}
+							  message={"Birthday Card Created!"} user={user ? true : false} />
 			</div>
 		</div>
 	);
