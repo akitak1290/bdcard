@@ -79,10 +79,13 @@ export function CreateAccountDialog({ disableSignIn }: { disableSignIn?: boolean
 			>
 				Sign Up
 			</button>
-			<p className="mt-4 text-center w-full">
-				Already have an account?
-				<Link href="/signIn" className="text-amber-500"> sign in
-				</Link></p>
+			{ 
+				!disableSignIn &&
+				<p className="mt-4 text-center w-full">
+					Already have an account?
+					<Link href="/signIn" className="text-amber-500"> sign in
+					</Link></p>
+			}
 		</div>
 	)
 }
