@@ -18,7 +18,6 @@ export function SignInDialog({ disableSignUp }: { disableSignUp?: boolean }) {
 			await signInWithEmailAndPassword(email, password);
 			setEmail('');
 			setPassword('');
-			router.push('/createCard');
 		} catch (e) {
 			console.log(e);
 		}
