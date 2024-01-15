@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Birthday Card Generator
 
-## Getting Started
+## Introduction
+Birthday cards are a great way to express a person's
+feeling to the ones they cherish, but sometimes we forget
+to prepare one or can't afford one (mainly due to distance).
+<br />
+<br />
+This simple web application provides a solution for those
+occasions by letting users to prepare a thoughtful message
+wrapped in a nice visual, their digital birthday card, to send
+to their love ones.
 
-First, run the development server:
+## Requirements
+- Users can login using their google account.
+- Users can create new digital birthday card while logged in.
+- Users can view digital birthday cards while not logged in through unique urls for those cards.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## High Level Design
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+![Design](graph.png)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Authentication
+Use Firebase Auth to handles user authentication.
+This also enable popup sign in with Google, GitHub,
+and others.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Web client
+A NextJS application to let user to sign in,
+create, and share virtual birthday cards.
+The web app will be hosted on Vercel as it
+has first-class support for NextJS.
 
-## Learn More
+### Client Data Fetching
+Most of the operations are simple and require
+few calls to the db, so client-side fetching
+with react hooks and firebase web sdk is the
+fastest and easiest way to do this.
 
-To learn more about Next.js, take a look at the following resources:
+### Firebase cloud
+For each card, user will need to specify the
+recipient's name, birthday message, a signature
+from the sender, and the unique link for that card. 
+These information will be stored in a document in 
+the `Cards` collection.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### React-Firebase-Hooks
+An external library that makes integrating firebase
+into the project easier with features like 
+listener to get our user when a new user is created.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Detailed design
 
-## Deploy on Vercel
+### Create new cards
+Ideally only authenticated users can create new cards
+so they can edit and remove them. Also, it helps later on
+when we need to enforce quota per user. (e.g. 100 cards total?).
+A unique url will be attached to each card.
+<br />
+<br />
+Firebase's cloud storage provides a simple way to store
+and query data so we will use that to store information
+about each card.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### View cards
+Users can shard their unique cards links that will will
+give access to a view-only version of those cards. 
