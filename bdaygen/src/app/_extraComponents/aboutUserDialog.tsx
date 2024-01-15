@@ -3,16 +3,31 @@
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Dialog, Transition } from '@headlessui/react';
-import { signOut } from "firebase/auth";
+import { deleteUser, signOut } from "firebase/auth";
+import { collection, getDocs, query } from 'firebase/firestore';
 
-import { auth } from "@/app/_firebase/config";
+import { auth, db } from "@/app/_firebase/config";
 import { AddUserToDb } from "@/app/_firebase/manageUsers";
 import useSignInAnon from '@/app/_firebase/AuthAnon';
 import { SignInDialog } from '../signIn/page';
 import { CreateAccountDialog } from '../createAccount/page';
+import { CARD_COLLECTION, USER_COLLECTION } from '../_firebase/util';
 
 function classNames(...classes: any[]) {
 	return classes.filter(Boolean).join(' ');
+}
+
+async function getUserCards(uid: string) {
+	const cardIds: string[] = []
+	console.log(uid)
+	const querySnapshot = await getDocs(collection(db, USER_COLLECTION, uid, CARD_COLLECTION));
+	console.log(querySnapshot)
+	querySnapshot.forEach((doc) => {
+		// doc.data() is never undefined for query doc snapshots
+		console.log(doc.id, " => ", doc.data());
+		cardIds.push(doc.id);
+	});
+	return cardIds;
 }
 
 type PropType = {
@@ -27,9 +42,11 @@ type PropType = {
 export default function AboutUserDialog(prop: PropType) {
 	const { isOpen, setIsOpen, message } = prop;
 	const [signInAnon, loggedInUser, loadingUser, errorUser] = useSignInAnon(auth);
+
 	const [loading, setLoading] = useState(false);
 	const [authType, setAuthType] = useState(0);
 	const [promptError, setPromptError] = useState('');
+	const [cardIds, setCardIds] = useState<string[]>([]);
 
 	const [user, loadingAuth, errorAuth] = useAuthState(auth);
 
@@ -49,6 +66,17 @@ export default function AboutUserDialog(prop: PropType) {
 		if (errorUser) setPromptError("Something when wrong, please try again later");
 	}, [loggedInUser, loadingUser, errorUser])
 
+	useEffect(() => {
+		if (isOpen && user) {
+			// i want this to trigger everytime the dialog
+			// is open so new data is fetched, might need
+			// to add a cache
+			getUserCards(user.uid).then((ids) => {
+				setCardIds(ids);
+			});
+		}
+	}, [isOpen])
+
 	const handleSignInAnon = async () => {
 		if (loading) return;
 
@@ -56,13 +84,26 @@ export default function AboutUserDialog(prop: PropType) {
 			setLoading(true);
 			await signInAnon();
 		} catch (e) {
-			console.log(e);
+			setPromptError("Something went wrong, please try again later");
 		}
 	}
 
-	const handleSignOut = () => {
-		signOut(auth)
-		console.log('signed out user')
+	const handleSignOut = async () => {
+		try {
+			await signOut(auth);
+		} catch (e) {
+			setPromptError("Something went wrong, please try again later");
+		}
+	}
+
+	const handleDeleteAccount = async () => {
+		if (!user) return;
+
+		try {
+			await deleteUser(user);
+		} catch (e) {
+			setPromptError("Something went wrong, please try again later");
+		}
 	}
 
 	return (
@@ -158,7 +199,12 @@ export default function AboutUserDialog(prop: PropType) {
 											<SignInDialog disableSignUp={true} />
 											: <CreateAccountDialog disableSignIn={true} />
 								}
-								{(user) && <button className='py-5' onClick={handleSignOut}>Sign out</button>}
+								{(user) &&
+									<>
+										<button className='py-5' onClick={handleSignOut}>Sign out</button>
+										{(cardIds) && cardIds.map((v) => <h2>{v}</h2>)}
+										<button className='py-5' onClick={handleDeleteAccount}>Delete account</button>
+									</>}
 							</Dialog.Panel>
 						</Transition.Child>
 					</div>
