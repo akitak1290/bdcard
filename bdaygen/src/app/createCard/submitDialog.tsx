@@ -5,8 +5,8 @@ import { Dialog, Transition } from '@headlessui/react';
 
 import { auth } from "@/app/_firebase/config";
 import useSignInAnon from '@/app/_firebase/AuthAnon';
-import { SignInDialog } from '../signIn/page';
-import { CreateAccountDialog } from '../createAccount/page';
+import { SignInDialog } from '@/app/signIn/signInDialog';
+import { CreateAccountDialog } from '@/app/createAccount/createAccountDialog';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { PostNewCard } from '@/app/_firebase/manageCards';
 

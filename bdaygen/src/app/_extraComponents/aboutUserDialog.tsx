@@ -9,8 +9,8 @@ import { collection, getDocs, query } from 'firebase/firestore';
 import { auth, db } from "@/app/_firebase/config";
 import { AddUserToDb } from "@/app/_firebase/manageUsers";
 import useSignInAnon from '@/app/_firebase/AuthAnon';
-import { SignInDialog } from '../signIn/page';
-import { CreateAccountDialog } from '../createAccount/page';
+import { SignInDialog } from '@/app/signIn/signInDialog';
+import { CreateAccountDialog } from '@/app/createAccount/createAccountDialog';
 import { CARD_COLLECTION, USER_COLLECTION } from '../_firebase/util';
 
 function classNames(...classes: any[]) {
