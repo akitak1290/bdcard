@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useSignInWithEmailAndPassword, useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/app/_firebase/config";
 import { useRouter } from "next/navigation";
@@ -9,31 +9,47 @@ import Spinner from "@/app/_extraComponents/spinner";
 export function SignInDialog({ disableSignUp }: { disableSignUp?: boolean }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [promptError, setPromptError] = useState('');
 
 	const [user, loadingUser, errorUser] = useAuthState(auth);
-	const [signInWithEmailAndPassword, loggedInUser, loading, error] = useSignInWithEmailAndPassword(auth);
+	const [signInWithEmailAndPassword, loggedInUser, loading, errorLogIn] = useSignInWithEmailAndPassword(auth);
+
+	useEffect(() => {
+		if (errorLogIn) {
+			setPromptError(errorLogIn.code.split('/')[1])
+		}
+	}, [errorLogIn])
 
 	const handleSignIn = async () => {
 		try {
 			await signInWithEmailAndPassword(email, password);
 			console.log(user!.uid)
-			// AddUserToDb(loggedInUser.user.uid);
 			setEmail('');
 			setPassword('');
-		} catch (e) {
-			console.log(e);
-		}
+		} catch (e) { }
+	}
+
+	const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setEmail(e.target.value)
+		if (promptError !== '') setPromptError('')
+	}
+
+	const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setPassword(e.target.value)
+		if (promptError !== '') setPromptError('')
 	}
 
 	return (
 		<div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-			{(error) && <h2 className='text-b text-amber-700 text-center'>Something when wrong!, please try again later.</h2>}
+			{(promptError !== '') && <h2 className='text-b text-amber-700 text-center'>
+				{promptError}
+			</h2>}
 			<h2 className="text-2xl font-bold mb-6">Sign In</h2>
 			<input
 				type="email"
 				placeholder="Email"
 				value={email}
-				onChange={(e) => setEmail(e.target.value)}
+				onChange={handleEmailChange}
 				className="mb-4 w-full border p-2 rounded"
 				required
 			/>
@@ -41,7 +57,7 @@ export function SignInDialog({ disableSignUp }: { disableSignUp?: boolean }) {
 				type="password"
 				placeholder="Password"
 				value={password}
-				onChange={(e) => setPassword(e.target.value)}
+				onChange={handlePasswordChange}
 				className="mb-4 w-full border p-2 rounded"
 				required
 			/>
