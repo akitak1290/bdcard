@@ -1,6 +1,6 @@
 "use client"
 
-import {  doc, getDoc } from "firebase/firestore";
+import { collectionGroup, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 // import { jsConfetti } from '@/app/_confetti/config';
@@ -13,21 +13,6 @@ import Image from 'next/image'
 import styles from './styles.module.css'
 import { upperDecor, middleDecor, lowerDecor } from "@/app/createCard/utils";
 
-async function fetchDocs(id: string) {
-	const docRef = doc(db, CARD_COLLECTION, id);
-
-	try {
-		const docSnap = await getDoc(docRef);
-		if (docSnap.exists()) {
-			return docSnap.data()
-		}
-	} catch (e) {
-		console.log(e)
-	}
-
-	return {}
-}
-
 export default function ViewCard({ params }: { params: { cid: string } }) {
 	const [recipientName, setRecipientName] = useState('');
 	const [message, setMessage] = useState('');
@@ -36,24 +21,32 @@ export default function ViewCard({ params }: { params: { cid: string } }) {
 	const [curUpperDecor, setCurUpperDecor] = useState(Object.keys(upperDecor)[0]);
 	const [curMiddleDecor, setCurMiddleDecor] = useState(Object.keys(middleDecor)[0]);
 	const [curLowerDecor, setCurLowerDecor] = useState(Object.keys(lowerDecor)[0]);
-	
+
 	const [gotData, setGotData] = useState(false);
 
 	useEffect(() => {
-		// one time thing
-		fetchDocs(params.cid).then((value) => {
-			setRecipientName(value.recipientName);
-			setMessage(value.message);
-			setSignOff(value.signOff);
-			setCurUpperDecor(value.curUpperDecor);
-			setCurMiddleDecor(value.curMiddleDecor);
-			setCurLowerDecor(value.curLowerDecor);
-			setGotData(true);
+		// one-time thing
+		async function getCard() {
+			const cards = query(collectionGroup(db, CARD_COLLECTION), where('id', '==', params.cid));
+			const querySnapshot = await getDocs(cards);
 
-			// ! THIS THING CREATES A CANVAS OBJECT IN BODY
-			const jsConfetti = new JSConfetti();
-			jsConfetti.addConfetti();
-		})
+			querySnapshot.forEach((doc) => {
+				const value = doc.data();
+				setRecipientName(value.recipientName);
+				setMessage(value.message);
+				setSignOff(value.signOff);
+				setCurUpperDecor(value.curUpperDecor);
+				setCurMiddleDecor(value.curMiddleDecor);
+				setCurLowerDecor(value.curLowerDecor);
+				setGotData(true);
+
+				// ! THIS THING CREATES A CANVAS OBJECT IN BODY
+				const jsConfetti = new JSConfetti();
+				jsConfetti.addConfetti();
+			});
+		}
+
+		getCard();
 	}, [])
 
 	if (!gotData) {
