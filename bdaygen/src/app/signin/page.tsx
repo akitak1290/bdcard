@@ -10,12 +10,14 @@ export function SignInDialog({ disableSignUp }: { disableSignUp?: boolean }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
+	const [user, loadingUser, errorUser] = useAuthState(auth);
 	const [signInWithEmailAndPassword, loggedInUser, loading, error] = useSignInWithEmailAndPassword(auth);
-	const router = useRouter()
 
 	const handleSignIn = async () => {
 		try {
 			await signInWithEmailAndPassword(email, password);
+			console.log(user!.uid)
+			// AddUserToDb(loggedInUser.user.uid);
 			setEmail('');
 			setPassword('');
 		} catch (e) {
@@ -64,6 +66,7 @@ export default function SignIn() {
 	const [user, loading, error] = useAuthState(auth);
 
 	useEffect(() => {
+		console.log('woo')
 		if (!loading && user) router.push('/');
 	}, [user, loading, error])
 

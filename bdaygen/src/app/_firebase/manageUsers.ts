@@ -3,8 +3,11 @@ import { db } from "./config";
 import { USER_COLLECTION } from "./util";
 
 export async function AddUserToDb(id: string) {
-	await setDoc(doc(db, USER_COLLECTION, id), {
-		uid: id,
-		timeCreated: Date().toString()
-	});
+	try {
+		await setDoc(doc(db, USER_COLLECTION, id), {
+			timeCreated: Date().toString()
+		});
+		return id;
+	} catch(e) {}
+	return;
 }

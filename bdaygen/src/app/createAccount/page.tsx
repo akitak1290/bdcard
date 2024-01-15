@@ -2,10 +2,12 @@
 
 import { ChangeEvent, useEffect, useState } from "react";
 import { useAuthState, useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth } from "@/app/_firebase/config";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+import { auth } from "@/app/_firebase/config";
 import Spinner from "@/app/_extraComponents/spinner";
+import { AddUserToDb } from "@/app/_firebase/manageUsers";
 
 export function CreateAccountDialog({ disableSignIn }: { disableSignIn?: boolean }) {
 	const [email, setEmail] = useState('');
@@ -19,6 +21,8 @@ export function CreateAccountDialog({ disableSignIn }: { disableSignIn?: boolean
 		error
 	] = useCreateUserWithEmailAndPassword(auth);
 
+	const [user, loadingAuth, errorAuth] = useAuthState(auth);
+
 	useEffect(() => {
 		if (error) {
 			console.log(error)
@@ -27,9 +31,21 @@ export function CreateAccountDialog({ disableSignIn }: { disableSignIn?: boolean
 		}
 	}, [error, loading])
 
+	// so.. 1 concern is: this will always need to
+	// be done first before other operations like
+	// submit a card, else the user won't show up
+	// in the Users col and the app will blown up
+	// TODO: ?
+	useEffect(() => {
+		if (user) {
+			AddUserToDb(user.uid);
+		}
+	}, [user])
+
 	const handleSignUp = async () => {
 		try {
 			await createUserWithEmailAndPassword(email, password);
+			
 		} catch (e) {
 			console.log(e);
 		}
