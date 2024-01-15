@@ -7,6 +7,8 @@ import { auth } from "@/app/_firebase/config";
 import useSignInAnon from '@/app/_firebase/AuthAnon';
 import { SignInDialog } from '../signIn/page';
 import { CreateAccountDialog } from '../createAccount/page';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { PostNewCard } from '@/app/_firebase/manageCards';
 
 function classNames(...classes: any[]) {
 	return classes.filter(Boolean).join(' ');
@@ -15,42 +17,60 @@ function classNames(...classes: any[]) {
 type PropType = {
 	isOpen: boolean,
 	setIsOpen: Dispatch<SetStateAction<boolean>>,
-	message: string,
-	user: boolean
+	postObj: Object
 }
 
 // TODO: refac
 // TODO: atrocious nested ternary, please fix when sober
 
-export default function CustomDialog(prop: PropType) {
-	const { isOpen, setIsOpen, message, user } = prop;
+export default function SubmitDialog(prop: PropType) {
+	const { isOpen, setIsOpen, postObj } = prop;
+
+	const [user, loadingUser, errorUser] = useAuthState(auth);
+
 	const [signInAnon] = useSignInAnon(auth);
+	
 	const [loading, setLoading] = useState(false);
 	const [authType, setAuthType] = useState(0);
+	const [promptMessage, setPromptMessage] = useState('');
+	const [promptError, setPromptError] = useState('');
 
 	useEffect(() => {
-		if (user) {
+		setPromptError('');
+		setAuthType(0);
+		if (user && isOpen) {
 			setLoading(false);
-			setAuthType(0);
-		};
-	}, [user])
+			PostNewCard(user.uid, postObj)
+				.then((docRef) => {
+					if (docRef) setPromptMessage(docRef.id);
+					else setPromptError('Failed to post, please try again later');
+				});
+		} 
+		if (!user && isOpen) {
+			setPromptMessage('Sign in to save your card!');
+		}
+	}, [user, isOpen])
 
 	const handleSignInAnon = async () => {
 		if (loading) return;
+
+		setPromptError('');
 
 		try {
 			setLoading(true);
 			await signInAnon();
 		} catch (e) {
-			console.log(e);
+			setPromptError('Something went wrong, please try again later');
 		}
 	}
 
 	return (
 		<Transition appear show={isOpen} as={Fragment}>
 			<Dialog as="div" className="relative z-10" onClose={() => {
-				setIsOpen(false);
 				setAuthType(0);
+				setPromptMessage('');
+				setPromptError('');
+				setIsOpen(false);
 			}}>
 				<Transition.Child
 					as={Fragment}
@@ -80,7 +100,8 @@ export default function CustomDialog(prop: PropType) {
 									as="h3"
 									className="text-lg font-medium leading-6 text-gray-900 text-center"
 								>
-									{(user) ? message : "Sign in to save your card"}
+									{promptMessage}
+									{(promptError !== "") && <h2 className='text-b text-amber-700 text-center'>{promptError}</h2>}
 								</Dialog.Title>
 								{
 									(authType === 0) ?
@@ -131,7 +152,6 @@ export default function CustomDialog(prop: PropType) {
 											>
 												{(loading) ? "Signing you in..." : "Sign up"}
 											</button>
-											{/* <SignInDialog /> */}
 										</div>
 										: (authType === 1) ?
 											<SignInDialog disableSignUp={true} />

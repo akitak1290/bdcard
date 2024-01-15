@@ -1,16 +1,11 @@
 "use client"
 
-import { useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useRouter } from "next/navigation";
-
-import { auth } from "@/app/_firebase/config";
-import Spinner from "@/app/_extraComponents/spinner";
-import CustomDialog from "./customDialog";
-import CardInfoForm from "./CardInfoForm";
-import StickersForm from "./StickersForm";
+import {useState } from "react";
 
 import { upperDecor, middleDecor, lowerDecor } from "./utils"
+import SubmitDialog from "./submitDialog";
+import CardInfoForm from "./CardInfoForm";
+import StickersForm from "./StickersForm";
 
 export default function CreateCard() {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -26,47 +21,14 @@ export default function CreateCard() {
 	const [curMiddleDecor, setCurMiddleDecor] = useState(Object.keys(middleDecor)[0]);
 	const [curLowerDecor, setCurLowerDecor] = useState(Object.keys(lowerDecor)[0]);
 
-	const [user, loading, error] = useAuthState(auth);
-
-	const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		setIsDialogOpen(true);
 
-		// TODO: is adding user id as public data like
-		// TODO: this really a good idea? change later?
-		// const response = await fetch('/api', {
-		// 	method: 'POST',
-		// 	headers: {
-		// 		'Content-Type': 'application/json',
-		// 	},
-		// 	body: JSON.stringify({
-		// 		'recipientName': recipientName,
-		// 		'message': message,
-		// 		'signOff': signOff,
-		// 		'curUpperDecor': curUpperDecor,
-		// 		'curMiddleDecor': curMiddleDecor,
-		// 		'curLowerDecor': curLowerDecor
-		// 	})
-		// });
-		const response = {ok: false}
-
-		if (response.ok) {
-			// const data = await response.json();
-
-			setRecipientName('');
-			setMessage('');
-			setSignOff('');
-
-			await sleep(1500);
-			// router.push(`/viewCard/${data.docId}`);
-		} else {
-			// console.log(response.status)
-			// setPromptError(`Something went wrong, please try again later\n${response.status}`)
-		}
-
+		// setRecipientName('');
+		// setMessage('');
+		// setSignOff('');
 	};
 
 	// if (loading || !user) {
@@ -104,7 +66,7 @@ export default function CreateCard() {
 							<StickersForm
 								recipientName={recipientName} message={message} signOff={signOff}
 								curUpperDecor={curUpperDecor} curMiddleDecor={curMiddleDecor} curLowerDecor={curLowerDecor}
-								setCurUpperDecor={setCurUpperDecor} setCurMiddleDecor={setCurMiddleDecor} setCurLowerDecor={setCurLowerDecor}/>
+								setCurUpperDecor={setCurUpperDecor} setCurMiddleDecor={setCurMiddleDecor} setCurLowerDecor={setCurLowerDecor} />
 							<div className="w-full flex justify-between">
 								<button className="bg-blue-500 text-white py-2 px-4 rounded 
 											   hover:bg-blue-600 transition duration-300"
@@ -122,8 +84,16 @@ export default function CreateCard() {
 							</div>
 						</>
 				}
-				<CustomDialog isOpen={isDialogOpen} setIsOpen={setIsDialogOpen}
-							  message={"Birthday Card Created!"} user={user ? true : false} />
+				<SubmitDialog isOpen={isDialogOpen} setIsOpen={setIsDialogOpen}
+					postObj={{
+						'recipientName': recipientName,
+						'message': message,
+						'signOff': signOff,
+						'curUpperDecor': curUpperDecor,
+						'curMiddleDecor': curMiddleDecor,
+						'curLowerDecor': curLowerDecor
+					}}
+				/>
 			</div>
 		</div>
 	);
