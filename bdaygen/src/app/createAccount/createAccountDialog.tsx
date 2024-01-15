@@ -23,8 +23,6 @@ export function CreateAccountDialog({ disableSignIn }: { disableSignIn: boolean 
 
 	useEffect(() => {
 		if (error) {
-			console.log(error)
-			console.log(error.code.split('/')[1])
 			setPromptError(error.code.split('/')[1])
 		}
 	}, [error, loading])
@@ -44,9 +42,7 @@ export function CreateAccountDialog({ disableSignIn }: { disableSignIn: boolean 
 		try {
 			await createUserWithEmailAndPassword(email, password);
 
-		} catch (e) {
-			console.log(e);
-		}
+		} catch (e) {}
 
 		setEmail('');
 		setPassword('');

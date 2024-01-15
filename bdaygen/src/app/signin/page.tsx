@@ -13,7 +13,6 @@ export default function SignIn() {
 	const [user, loading, error] = useAuthState(auth);
 
 	useEffect(() => {
-		console.log('woo')
 		if (!loading && user) router.push('/');
 	}, [user, loading, error, router])
 

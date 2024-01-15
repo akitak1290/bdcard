@@ -19,12 +19,9 @@ function classNames(...classes: any[]) {
 
 async function getUserCards(uid: string) {
 	const cardIds: string[] = []
-	console.log(uid)
 	const querySnapshot = await getDocs(collection(db, USER_COLLECTION, uid, CARD_COLLECTION));
-	console.log(querySnapshot)
 	querySnapshot.forEach((doc) => {
 		// doc.data() is never undefined for query doc snapshots
-		console.log(doc.id, " => ", doc.data());
 		cardIds.push(doc.id);
 	});
 	return cardIds;

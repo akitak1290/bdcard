@@ -21,7 +21,6 @@ export function SignInDialog({ disableSignUp }: { disableSignUp: boolean }) {
 	const handleSignIn = async () => {
 		try {
 			await signInWithEmailAndPassword(email, password);
-			console.log(user!.uid)
 			setEmail('');
 			setPassword('');
 		} catch (e) { }
