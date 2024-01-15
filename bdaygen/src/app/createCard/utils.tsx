@@ -1,6 +1,6 @@
 export const upperDecor = {
-	Balloons: "balloons.png",
-	Ribbons: "ribbons.png"
+	Balloons: "Balloons.png",
+	Ribbons: "Ribbons.png"
 }
 
 export const middleDecor = {
@@ -15,6 +15,6 @@ export const lowerDecor = {
 }
 
 export const effects = {
-	Stars1: "Stars1.png",
-	Stars2: "Stars2.png"
+	Stars1: "stars1.png",
+	Stars2: "stars2.png"
 }
