@@ -47,7 +47,7 @@ export default function ViewCard({ params }: { params: { cid: string } }) {
 		}
 
 		getCard();
-	}, [])
+	}, [params.cid])
 
 	if (!gotData) {
 		return (

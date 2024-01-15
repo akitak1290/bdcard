@@ -49,7 +49,7 @@ export default function SubmitDialog(prop: PropType) {
 		if (!user && isOpen) {
 			setPromptMessage('Sign in to save your card!');
 		}
-	}, [user, isOpen])
+	}, [user, isOpen, postObj])
 
 	const handleSignInAnon = async () => {
 		if (loading) return;

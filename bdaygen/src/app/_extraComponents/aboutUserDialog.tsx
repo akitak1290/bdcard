@@ -75,7 +75,7 @@ export default function AboutUserDialog(prop: PropType) {
 				setCardIds(ids);
 			});
 		}
-	}, [isOpen])
+	}, [isOpen, user])
 
 	const handleSignInAnon = async () => {
 		if (loading) return;
@@ -202,7 +202,7 @@ export default function AboutUserDialog(prop: PropType) {
 								{(user) &&
 									<>
 										<button className='py-5' onClick={handleSignOut}>Sign out</button>
-										{(cardIds) && cardIds.map((v) => <h2>{v}</h2>)}
+										{(cardIds) && cardIds.map((v, idx) => <h2 key={idx}>{v}</h2>)}
 										<button className='py-5' onClick={handleDeleteAccount}>Delete account</button>
 									</>}
 							</Dialog.Panel>

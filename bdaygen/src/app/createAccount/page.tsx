@@ -9,7 +9,7 @@ import { auth } from "@/app/_firebase/config";
 import Spinner from "@/app/_extraComponents/spinner";
 import { AddUserToDb } from "@/app/_firebase/manageUsers";
 
-export function CreateAccountDialog({ disableSignIn }: { disableSignIn?: boolean }) {
+export function CreateAccountDialog({ disableSignIn }: { disableSignIn: boolean }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [promptError, setPromptError] = useState('');
@@ -108,7 +108,7 @@ export default function CreateAccount() {
 
 	useEffect(() => {
 		if (!loadingAuth && user) router.push('/');
-	}, [user, loadingAuth, errorAuth])
+	}, [user, loadingAuth, errorAuth, router])
 
 	return (
 		<>
@@ -116,7 +116,7 @@ export default function CreateAccount() {
 				{
 					(!loadingAuth && !user)
 						?
-						<CreateAccountDialog />
+						<CreateAccountDialog disableSignIn={false} />
 						: <Spinner />
 				}
 			</div>

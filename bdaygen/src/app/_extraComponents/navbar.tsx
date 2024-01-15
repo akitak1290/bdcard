@@ -9,7 +9,7 @@ export default function Navbar() {
 
 	return (
 		<div className="flex justify-between w-full py-5 md:px-20 px-4">
-			<Link href="/">BDayExpress's logo</Link>
+			<Link href="/">BDayExpresss logo</Link>
 			<button onClick={() => setOpenDialog(true)}>Me</button>
 			<AboutUserDialog isOpen={openDialog} setIsOpen={setOpenDialog} message={"Your Account"}/>
 		</div>

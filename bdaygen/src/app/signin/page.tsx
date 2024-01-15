@@ -84,7 +84,7 @@ export default function SignIn() {
 	useEffect(() => {
 		console.log('woo')
 		if (!loading && user) router.push('/');
-	}, [user, loading, error])
+	}, [user, loading, error, router])
 
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gray-100">

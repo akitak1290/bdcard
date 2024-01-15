@@ -47,7 +47,7 @@ export default function CardInfoForm(prop: PropType) {
 			<form>
 				<div className="mb-4">
 					<label htmlFor="recipientName" className="block text-gray-700 text-sm font-bold mb-2">
-						Recipient's Name
+						Recipient&apos;s Name
 					</label>
 					<input
 						type="text"
