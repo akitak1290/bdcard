@@ -96,9 +96,9 @@ export default function SubmitDialog(prop: PropType) {
 					}
 				});
 		}
-		if (!user && isOpen) {
-			setPromptMessage('Sign in to save your card!');
-		}
+		// if (!user && isOpen) {
+		// 	setPromptMessage();
+		// }
 	}, [user, isOpen, postObj])
 
 	const handleSignInAnon = async () => {
@@ -151,20 +151,23 @@ export default function SubmitDialog(prop: PropType) {
 									as="h3"
 									className="text-lg font-medium leading-6 text-gray-900 text-center"
 								>
-									{promptMessage &&
-										<div>
-											Share your card:
-											<div className='bg-blue-100 rounded flex justify-between items-center p-3 mt-5'>
-												<Link href={promptMessage} className='break-words'>{promptMessage}</Link>
-												<button onClick={() => {
-													navigator.clipboard.writeText(`bdayexpress.vercel.app${promptMessage}`); // quick and dirty solve
-													setCopied(true);
-												}} disabled={copied}>
-													{(copied) ? <CheckMarkIcon /> : <CopyIcon />}
-												</button>
+									{
+										promptMessage != '' ?
+											<div>
+												Share your card:
+												<div className='bg-blue-100 rounded flex justify-between items-center p-3 mt-5'>
+													<Link href={promptMessage} className='break-words'>{promptMessage}</Link>
+													<button onClick={() => {
+														navigator.clipboard.writeText(`bdayexpress.vercel.app${promptMessage}`); // quick and dirty solve
+														setCopied(true);
+													}} disabled={copied}>
+														{(copied) ? <CheckMarkIcon /> : <CopyIcon />}
+													</button>
+												</div>
+												{(copied) && <p className='text-b text-amber-700 text-center'>copied to clipboard</p>}
 											</div>
-											{(copied) && <p className='text-b text-amber-700 text-center'>copied to clipboard</p>}
-										</div>}
+											: <p>Sign in to save your card!</p>
+									}
 									{(promptError !== "") && <p className='text-b text-amber-700 text-center'>{promptError}</p>}
 								</Dialog.Title>
 								{
