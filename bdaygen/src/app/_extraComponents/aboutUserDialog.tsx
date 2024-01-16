@@ -11,21 +11,11 @@ import { AddUserToDb } from "@/app/_firebase/manageUsers";
 import useSignInAnon from '@/app/_firebase/AuthAnon';
 import { SignInDialog } from '@/app/signIn/signInDialog';
 import { CreateAccountDialog } from '@/app/createAccount/createAccountDialog';
-import { CARD_COLLECTION, USER_COLLECTION } from '../_firebase/util';
 import Link from 'next/link';
+import { deleteCard, getUserCards } from '@/app/_firebase/manageCards';
 
 function classNames(...classes: any[]) {
 	return classes.filter(Boolean).join(' ');
-}
-
-async function getUserCards(uid: string) {
-	const cardIds: string[] = []
-	const querySnapshot = await getDocs(collection(db, USER_COLLECTION, uid, CARD_COLLECTION));
-	querySnapshot.forEach((doc) => {
-		// doc.data() is never undefined for query doc snapshots
-		cardIds.push(doc.id);
-	});
-	return cardIds;
 }
 
 type PropType = {
@@ -46,6 +36,10 @@ export default function AboutUserDialog(prop: PropType) {
 	const [promptError, setPromptError] = useState('');
 	const [cardIds, setCardIds] = useState<string[]>([]);
 
+	// quick and dirty way to force refetch
+	// TODO: might causes problems with rerendering
+	const [forceUpdate, setForceUpdate] = useState(false);
+
 	const [user, loadingAuth, errorAuth] = useAuthState(auth);
 
 	useEffect(() => {
@@ -54,7 +48,7 @@ export default function AboutUserDialog(prop: PropType) {
 			setAuthType(0);
 		};
 		if (errorAuth) setPromptError("Something when wrong, please try again later");
-	}, [user, loadingAuth, errorAuth])
+	}, [user, loadingAuth, errorAuth]);
 
 	useEffect(() => {
 		if (!loadingUser && loggedInUser) {
@@ -62,7 +56,7 @@ export default function AboutUserDialog(prop: PropType) {
 			AddUserToDb(loggedInUser.user.uid);
 		}
 		if (errorUser) setPromptError("Something when wrong, please try again later");
-	}, [loggedInUser, loadingUser, errorUser])
+	}, [loggedInUser, loadingUser, errorUser]);
 
 	useEffect(() => {
 		if (isOpen && user) {
@@ -73,7 +67,16 @@ export default function AboutUserDialog(prop: PropType) {
 				setCardIds(ids);
 			});
 		}
-	}, [isOpen, user])
+	}, [isOpen, user]);
+
+	useEffect(() => {
+		if (forceUpdate && user) {
+			setForceUpdate(false);
+			getUserCards(user.uid).then((ids) => {
+				setCardIds(ids);
+			});
+		}
+	}, [forceUpdate, user]);
 
 	const handleSignInAnon = async () => {
 		if (loading) return;
@@ -141,7 +144,7 @@ export default function AboutUserDialog(prop: PropType) {
 								>
 									{(user) ? message : "Sign in to save your card"}
 								</Dialog.Title>
-								{(promptError !== "") && <h2 className='text-b text-amber-700 text-center'>{promptError}</h2>}
+								{(promptError !== "") && <p className='text-b text-amber-700 text-center'>{promptError}</p>}
 								{
 									(authType === 0) ?
 										<div className={classNames(
@@ -176,7 +179,7 @@ export default function AboutUserDialog(prop: PropType) {
 											>
 												{(loading) ? "Signing you in..." : "Sign in with Email"}
 											</button>
-											<h2>or</h2>
+											<p>or</p>
 											<button
 												type="button"
 												disabled={loading}
@@ -201,9 +204,14 @@ export default function AboutUserDialog(prop: PropType) {
 									<>
 										<button className='py-5' onClick={handleSignOut}>Sign out</button>
 										{(cardIds) && cardIds.map((v, idx) =>
-											<h2 className='text-b text-center py-3' key={idx}>
-												<Link href={`/viewCard/${v}`} onClick={() => setIsOpen(false)}>{v}</Link>
-											</h2>
+											<span className='text-b flex justify-between py-3' key={idx}>
+												<Link className='hover:bg-blue-100'
+													href={`/viewCard/${v}`} onClick={() => setIsOpen(false)}>{v}</Link>
+												<button onClick={() => {
+													deleteCard(user.uid, v);
+													setForceUpdate(true);
+												}}>x</button>
+											</span>
 										)}
 										<button className='py-5' onClick={handleDeleteAccount}>Delete account</button>
 									</>}
