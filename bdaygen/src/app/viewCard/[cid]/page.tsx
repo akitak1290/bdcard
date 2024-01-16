@@ -64,6 +64,7 @@ export default function ViewCard({ params }: { params: { cid: string } }) {
 					<div className="w-inherit h-[30%]">
 						<Image
 							src={`/imgs/${upperDecor[curUpperDecor as keyof typeof upperDecor]}`}
+							priority={true}
 							width={761}
 							height={411}
 							quality={100}
@@ -73,6 +74,7 @@ export default function ViewCard({ params }: { params: { cid: string } }) {
 					<div className="w-[60%] h-[35%] mt-3">
 						<Image
 							src={`/imgs/${middleDecor[curMiddleDecor as keyof typeof middleDecor]}`}
+							priority={true}
 							width={494}
 							height={416}
 							quality={100}
@@ -82,6 +84,7 @@ export default function ViewCard({ params }: { params: { cid: string } }) {
 					<div className="w-[40%] h-[15%] mt-3">
 						<Image
 							src={`/imgs/${lowerDecor[curLowerDecor as keyof typeof lowerDecor]}`}
+							priority={true}
 							width={320}
 							height={216}
 							quality={100}
