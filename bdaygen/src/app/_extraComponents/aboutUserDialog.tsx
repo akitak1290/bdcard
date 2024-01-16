@@ -12,6 +12,7 @@ import useSignInAnon from '@/app/_firebase/AuthAnon';
 import { SignInDialog } from '@/app/signIn/signInDialog';
 import { CreateAccountDialog } from '@/app/createAccount/createAccountDialog';
 import { CARD_COLLECTION, USER_COLLECTION } from '../_firebase/util';
+import Link from 'next/link';
 
 function classNames(...classes: any[]) {
 	return classes.filter(Boolean).join(' ');
@@ -199,7 +200,11 @@ export default function AboutUserDialog(prop: PropType) {
 								{(user) &&
 									<>
 										<button className='py-5' onClick={handleSignOut}>Sign out</button>
-										{(cardIds) && cardIds.map((v, idx) => <h2 key={idx}>{v}</h2>)}
+										{(cardIds) && cardIds.map((v, idx) =>
+											<h2 className='text-b text-center py-3' key={idx}>
+												<Link href={`/viewCard/${v}`} onClick={() => setIsOpen(false)}>{v}</Link>
+											</h2>
+										)}
 										<button className='py-5' onClick={handleDeleteAccount}>Delete account</button>
 									</>}
 							</Dialog.Panel>
