@@ -22,8 +22,8 @@ to their love ones.
 
 ### Authentication
 Use Firebase Auth to handles user authentication.
-This also enable popup sign in with Google, GitHub,
-and others.
+This also enable popup sign in with Google, or
+as an anonymous user.
 
 ### Web client
 A NextJS application to let user to sign in,
@@ -37,7 +37,7 @@ few calls to the db, so client-side fetching
 with react hooks and firebase web sdk is the
 fastest and easiest way to do this.
 
-### Firebase cloud
+### Firebase cloud (Firestore)
 For each card, user will need to specify the
 recipient's name, birthday message, a signature
 from the sender, and the unique link for that card. 
@@ -54,8 +54,8 @@ listener to get our user when a new user is created.
 ### Create new cards
 Ideally only authenticated users can create new cards
 so they can edit and remove them. Also, it helps later on
-when we need to enforce quota per user. (e.g. 100 cards total?).
-A unique url will be attached to each card.
+when we need to enforce quota per user. (e.g. 5 cards total).
+A unique url will be attached with each card.
 <br />
 <br />
 Firebase's cloud storage provides a simple way to store
