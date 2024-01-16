@@ -1,6 +1,6 @@
 # Introducing Bdaycard Express
 
-[Vercel's Hosted Site](bdayexpress.vercel.app
+[Vercel's Hosted Site](https://bdayexpress.vercel.app
 ), built with NextJS and Firebase.
 
 A web application that lets users crate and share birthday cards.
