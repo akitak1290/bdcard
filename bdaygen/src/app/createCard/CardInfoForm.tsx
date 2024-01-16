@@ -43,7 +43,7 @@ export default function CardInfoForm(prop: PropType) {
 
 	return (
 		<div className="h-[500px]">
-			<h2 className="text-2xl font-bold mb-6">Let them know your thought!</h2>
+			<p className="text-2xl font-bold mb-6">Let them know your thought!</p>
 			<form>
 				<div className="mb-4">
 					<label htmlFor="recipientName" className="block text-gray-700 text-sm font-bold mb-2">

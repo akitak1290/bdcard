@@ -38,10 +38,10 @@ export function SignInDialog({ disableSignUp }: { disableSignUp: boolean }) {
 
 	return (
 		<div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-			{(promptError !== '') && <h2 className='text-b text-amber-700 text-center'>
+			{(promptError !== '') && <p className='text-b text-amber-700 text-center'>
 				{promptError}
-			</h2>}
-			<h2 className="text-2xl font-bold mb-6">Sign In</h2>
+			</p>}
+			<p className="text-2xl font-bold mb-6">Sign In</p>
 			<input
 				type="email"
 				placeholder="Email"

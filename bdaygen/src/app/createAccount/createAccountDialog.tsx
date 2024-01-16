@@ -61,8 +61,8 @@ export function CreateAccountDialog({ disableSignIn }: { disableSignIn: boolean 
 
 	return (
 		<div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-			<h2 className="text-2xl font-bold mb-6">Sign Up</h2>
-			{(promptError) && <h2 className='text-b text-amber-700 text-center'>{promptError}</h2>}
+			<p className="text-2xl font-bold mb-6">Sign Up</p>
+			{(promptError) && <p className='text-b text-amber-700 text-center'>{promptError}</p>}
 			<input
 				type="email"
 				placeholder="Email"

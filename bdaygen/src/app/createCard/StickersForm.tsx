@@ -34,7 +34,7 @@ export default function StickersForm(prop: PropType) {
 
 	return (
 		<div className="w-full flex flex-col justify-center items-center">
-			<h2 className="text-2xl font-bold mb-6">Add your personal touch!</h2>
+			<p className="text-2xl font-bold mb-6">Add your personal touch!</p>
 			<div className="flex md:flex-row-reverse flex-col gap-6">
 				<div className="flex flex-col md:gap-8 gap-2">
 					<RadioGroup value={curUpperDecor} onChange={setCurUpperDecor}>

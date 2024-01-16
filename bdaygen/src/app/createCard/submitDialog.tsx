@@ -8,7 +8,7 @@ import useSignInAnon from '@/app/_firebase/AuthAnon';
 import { SignInDialog } from '@/app/signIn/signInDialog';
 import { CreateAccountDialog } from '@/app/createAccount/createAccountDialog';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { PostNewCard } from '@/app/_firebase/manageCards';
+import { postNewCard } from '@/app/_firebase/manageCards';
 import Link from 'next/link';
 
 function classNames(...classes: any[]) {
@@ -83,10 +83,17 @@ export default function SubmitDialog(prop: PropType) {
 		setAuthType(0);
 		if (user && isOpen) {
 			setLoading(false);
-			PostNewCard(user.uid, postObj)
-				.then((docRef) => {
-					if (docRef) setPromptMessage(`/viewCard/${docRef.id}`);
-					else setPromptError('Failed to post, please try again later');
+			postNewCard(user.uid, postObj)
+				.then((result) => {
+					if (result.docRef && result.errorCode == 0) setPromptMessage(`/viewCard/${result.docRef.id}`);
+					else {
+						// TODO: 5 is a hardcoded restriction, change it
+						if (result.errorCode == 1) {
+							setPromptError('You can only have 5 cards at a time');
+						} else {
+							setPromptError('Failed to post, please try again later');
+						}
+					}
 				});
 		}
 		if (!user && isOpen) {
@@ -145,7 +152,7 @@ export default function SubmitDialog(prop: PropType) {
 									className="text-lg font-medium leading-6 text-gray-900 text-center"
 								>
 									{promptMessage &&
-										<p>
+										<div>
 											Share your card:
 											<div className='bg-blue-100 rounded flex justify-between items-center p-3 mt-5'>
 												<Link href={promptMessage} className='break-words'>{promptMessage}</Link>
@@ -157,8 +164,8 @@ export default function SubmitDialog(prop: PropType) {
 												</button>
 											</div>
 											{(copied) && <p className='text-b text-amber-700 text-center'>copied to clipboard</p>}
-										</p>}
-									{(promptError !== "") && <h2 className='text-b text-amber-700 text-center'>{promptError}</h2>}
+										</div>}
+									{(promptError !== "") && <p className='text-b text-amber-700 text-center'>{promptError}</p>}
 								</Dialog.Title>
 								{
 									(authType === 0) ?
@@ -194,7 +201,7 @@ export default function SubmitDialog(prop: PropType) {
 											>
 												{(loading) ? "Signing you in..." : "Sign in with Email"}
 											</button>
-											<h2>or</h2>
+											<p>or</p>
 											<button
 												type="button"
 												className={classNames(
