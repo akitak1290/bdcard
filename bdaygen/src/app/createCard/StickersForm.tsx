@@ -69,6 +69,7 @@ export default function StickersForm(prop: PropType) {
 														>
 															<Image
 																src={`/imgs/${upperDecor[key as keyof typeof upperDecor]}`}
+																priority={true}
 																width={761}
 																height={411}
 																quality={100}
@@ -117,6 +118,7 @@ export default function StickersForm(prop: PropType) {
 														>
 															<Image
 																src={`/imgs/${middleDecor[key as keyof typeof middleDecor]}`}
+																priority={true}
 																width={761}
 																height={411}
 																quality={100}
@@ -165,6 +167,7 @@ export default function StickersForm(prop: PropType) {
 														>
 															<Image
 																src={`/imgs/${lowerDecor[key as keyof typeof lowerDecor]}`}
+																priority={true}
 																width={761}
 																height={411}
 																quality={100}
