@@ -4,7 +4,7 @@ import { collectionGroup, doc, getDoc, getDocs, query, where } from "firebase/fi
 import { useEffect, useState } from "react";
 
 // import { jsConfetti } from '@/app/_confetti/config';
-import JSConfetti from 'js-confetti'
+import JSConfetti from 'js-confetti';
 
 import { db } from "@/app/_firebase/config";
 import { CARD_COLLECTION } from '@/app/_firebase/util';
